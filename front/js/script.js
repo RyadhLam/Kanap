@@ -1,26 +1,19 @@
-"use strict";
-//Retrieving objects from server- Convert to Json
+let i = 0;
 
-const products = document.querySelector("#items");
-fetch("http://localhost:3000/api/products")
-  .then((response) => response.json())
-  .then((data) => product(data))
-  .catch((error) => console.log(error));
+// debut de la fonction une fois que le DOM est chargé
+let start = () => {
+  fetch("http://localhost:3000/api/products")
+    .then((res) => res.json())
+    .then((data) => {
+      sessionStorage.setItem("productData", JSON.stringify(data));
+      const kanapData = JSON.parse(sessionStorage.getItem("productData"));
+      for (let element of kanapData) {
+        document.getElementById('items')
+          .insertAdjacentHTML('beforeend',
+            `<a href="./product.html?id=${kanapData[i]._id}"><article><img src="${kanapData[i].imageUrl}" alt="${kanapData[i].altTxt}"><h3 class="productName">${kanapData[i].name}</h3><p class="productDescription">${kanapData[i].description}</p></article></a>`);
+        i++
+      }
+    })
+}
 
-const product = function (data) {
-  console.log(data);
-  // Loop to iterate products
-  for (let i = 0; i < data.length; i++) {
-    const html = `
-    <section id="items">
-      <a href="product.html?id=${data[i]._id}"> 
-        <article>
-          <img src="${data[i].imageUrl}" alt="${data[i].altTxt}">
-          <h3 class="productName">${data[i].name}"</h3>
-          <p class="productDescription">${data[i].description}</p>
-        </article>
-      </a> 
-    </section>`;
-    products.insertAdjacentHTML("beforeend", html);
-  }
-};
+window.addEventListener('load', start)      
